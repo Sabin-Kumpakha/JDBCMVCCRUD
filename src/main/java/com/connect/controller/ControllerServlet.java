@@ -71,7 +71,7 @@ public class ControllerServlet extends HttpServlet {
 			
 			response.setContentType("text/html");
 			PrintWriter out = response.getWriter();
-			//		out.println("<tr><th>Name</th><th>value</th></tr>");
+
 			if (student != null) {	
 				out.println("<html><title>STUDENT DATA</title></html>");
 				out.println("<body bgcolor='lightblue'>");
@@ -117,6 +117,66 @@ public class ControllerServlet extends HttpServlet {
 			}
 		}
 		
+		if (requestURI.endsWith("editform")) {
+			String sid = request.getParameter("sid");
+			Student student = stdService.findById(Integer.parseInt(sid));
+			
+			if(student != null) {
+				response.setContentType("text/html");
+				
+				//display editpage using html
+				PrintWriter out = response.getWriter();
+				out.println("<html><head><title>OUTPUT</title></head>");
+				out.println("<body bgcolor='lightblue'>");
+				out.println("<br/><br/><br/>");
+				out.println("<form method='post' action='./update' >");
+				out.println("<table align='center'>");
+				out.println("<tr><th>ID</th><td>"+ student.getSid() +"<td></tr>");
+				out.println("<input type='hidden' name='sid' value='"+student.getSid()+"'/>");
+				out.println("<tr><th>NAME</th><td><input type='text' name='sname' value='"+ student.getSname() +"' /></td></tr>");
+				out.println("<tr><th>AGE</th><td><input type='text' name='sage' value='"+ student.getSage() +"' /></td></tr>");
+				out.println("<tr><th>ADDRESS</th><td><input type='text' name='saddr' value='"+ student.getSaddr() +"' /></td></tr>");
+				out.println("<tr><td></td><td><input type='submit' value='update' /></td></tr>");
+				out.println("</table>");
+				out.println("</form>");
+				out.println("</body>");
+				out.println("</html>");
+				out.close();
+				
+			} else {
+				rd = request.getRequestDispatcher("../notfound.html");
+				rd.forward(request, response);
+			}
+		}
+		
+		if(requestURI.endsWith("update")) {
+			String sid = request.getParameter("sid");
+			String sname = request.getParameter("sname");
+			String sage = request.getParameter("sage");
+			String saddr = request.getParameter("saddr");
+			
+			System.out.println(sid);
+			System.out.println(sname);
+			System.out.println(sage);
+			System.out.println(saddr);
+			
+			Student student = new Student();
+			student.setSid(Integer.parseInt(sid));
+			student.setSname(sname);
+			student.setSage(Integer.parseInt(sage));
+			student.setSaddr(saddr);
+			
+			String status = stdService.updateById(student);
+			System.out.println("Status of update: "+status);
+			
+			if (status.equals("success")) {
+				rd = request.getRequestDispatcher("../success.html");
+				rd.forward(request, response);
+			} else if (status.equals("failure")) {
+				rd = request.getRequestDispatcher("../failure.html");
+				rd.forward(request, response);
+			}
+		}
 		//
 	}
 
