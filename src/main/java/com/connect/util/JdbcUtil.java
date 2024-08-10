@@ -1,11 +1,15 @@
 package com.connect.util;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
+
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
 public class JdbcUtil {
 	
@@ -23,6 +27,14 @@ public class JdbcUtil {
 	
 	public static Connection getJdbcConnection() throws SQLException, IOException {
 		String dbLocation = "D:\\Backend with Java , Spring\\Eclipse workspace3(Servlet&JSP)\\JDBCMVCApp\\src\\main\\java\\com\\connect\\properties\\db.properties";
+		HikariConfig config = new HikariConfig(dbLocation);
+		HikariDataSource dataSource = new HikariDataSource(config);
+			Connection connection = dataSource.getConnection();
+			return connection;
+		}
+
+	private static Connection physicalConnection() throws FileNotFoundException, IOException, SQLException {
+		String dbLocation = "D:\\Backend with Java , Spring\\Eclipse workspace3(Servlet&JSP)\\JDBCMVCApp\\src\\main\\java\\com\\connect\\properties\\db.properties";
 		FileInputStream fis = new FileInputStream(dbLocation);
 		Properties properties = new Properties();
 		properties.load(fis);
@@ -33,6 +45,6 @@ public class JdbcUtil {
 		
 		Connection connection = DriverManager.getConnection(url, username, password);
 		return connection;
-		}
+	}
 
 }
